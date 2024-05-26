@@ -15,7 +15,7 @@ from requests.auth import HTTPBasicAuth
 import spacy
 
 
-ADMIN_TELEGRAM_ID = 389486963
+ADMIN_TELEGRAM_ID = 0 #ID админа
 
 user_states = {}
 
@@ -44,32 +44,6 @@ resources = {
     }
 }
 
-# def create_jira_issue(summary, description, project_key, issue_type, jira_url, jira_user, api_token):
-#     url = f"{jira_url}/rest/api/3/issue"
-#     headers = {
-#         "Accept": "application/json",
-#         "Content-Type": "application/json"
-#     }
-#     auth = HTTPBasicAuth(jira_user, api_token)
-#     json = {
-#         "fields": {
-#             "project":
-#             {
-#                 "key": project_key
-#             },
-#             "summary": summary,
-#             "description": description,
-#             "issuetype": {
-#                 "name": issue_type
-#             }
-#         }
-#     }
-#
-#     response = requests.post(url, json=json, headers=headers, auth=auth)
-#     if response.status_code == 201:
-#         return f"Successfully created Issue ID: {response.json()['id']}"
-#     else:
-#         return f"Failed to create issue: {response.status_code} {response.text}"
 
 def verify_secret_phrase(user_id, provided_phrase):
     conn = create_connection()
@@ -145,7 +119,7 @@ def get_service_keyboard():
 
 logging.basicConfig(filename='chat.log', level=logging.INFO, format='%(asctime)s - %(name)s - %(levelname)s - %(message)s')
 
-bot = Bot(token='6580173132:AAH2WCaDWJwvQyVgrV1b7DGmBRS-T6nvx40')
+bot = Bot(token='')  # Токен Telegram-бота
 dp = Dispatcher(bot)
 
 def set_randomized_password(telegram_id):
@@ -241,24 +215,6 @@ async def process_general_help(callback_query: types.CallbackQuery):
     await bot.send_message(callback_query.from_user.id, "Пожалуйста, опишите ваш вопрос.")
 
 
-# @dp.callback_query_handler(lambda c: c.data == 'role_management')
-# async def process_role_management(callback_query: types.CallbackQuery):
-#     user_id = callback_query.from_user.id
-#     user_name = callback_query.from_user.full_name  # Get the user's full name to include in the admin message
-#
-#     keyboard = InlineKeyboardMarkup(row_width=2)
-#     approve_button = InlineKeyboardButton("Approve", callback_data=f"approve_{user_id}")
-#     disapprove_button = InlineKeyboardButton("Disapprove", callback_data=f"disapprove_{user_id}")
-#     keyboard.add(approve_button, disapprove_button)
-#
-#     # Notify the admin
-#     admin_message = f"User {user_name} (ID: {user_id}) has requested role management."
-#     await bot.send_message(ADMIN_TELEGRAM_ID, admin_message, reply_markup=keyboard)
-#
-#     # Notify the user that their request is being processed
-#     await bot.answer_callback_query(callback_query.id)
-#     await bot.send_message(callback_query.from_user.id, "Your request for role management has been forwarded to an admin. You will be notified upon approval.")
-
 @dp.callback_query_handler(lambda c: c.data == 'role_management')
 async def process_role_management(callback_query: types.CallbackQuery):
     user_id = callback_query.from_user.id
@@ -281,10 +237,6 @@ async def disapprove_request(callback_query: types.CallbackQuery):
     await bot.answer_callback_query(callback_query.id, "Запрос отклонен.")
     await bot.delete_message(chat_id=callback_query.message.chat.id, message_id=callback_query.message.message_id)
 
-# @dp.message_handler()  # Assuming this handler catches follow-up messages for simplicity
-# async def handle_message(message: types.Message):ЫЫ
-#     resource_link = find_resource_nlp(message.text)
-#     await message.answer(resource_link)Ы
 
 if __name__ == '__main__':
     executor.start_polling(dp, skip_updates=True)
